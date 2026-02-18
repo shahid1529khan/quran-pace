@@ -244,7 +244,7 @@ export default function Dashboard() {
             {isCompleted ? (
               <div className="text-foreground font-medium text-center">
                 <span className="block text-4xl mb-2">⭐</span>
-                You are a finisher!
+                Reset Progress and Complete Again!!
               </div>
             ) : (
               <>
