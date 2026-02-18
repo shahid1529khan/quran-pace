@@ -1,0 +1,16 @@
+{
+  "name": "Ramadan Quran Planner",
+  "short_name": "Quran Planner",
+  "description": "Track your Quran completion journey during Ramadan.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#059669",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}
