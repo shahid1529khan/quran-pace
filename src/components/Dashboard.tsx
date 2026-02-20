@@ -37,15 +37,13 @@ export default function Dashboard() {
     return Math.ceil(currentDay + remaining / rate);
   }, [state.currentTotalCompleted, state.currentRamadanDay, store.remainingUnits]);
 
-  const isOnTrack = useMemo(() => {
-    const expected = (store.maxUnits / state.targetCompletionDay) * state.currentRamadanDay;
-    return state.currentTotalCompleted >= Math.floor(expected);
-  }, [state.currentTotalCompleted, state.targetCompletionDay, state.currentRamadanDay, store.maxUnits]);
+  const expectedByToday = useMemo(() => {
+    return Math.round((store.maxUnits / state.targetCompletionDay) * state.currentRamadanDay);
+  }, [store.maxUnits, state.targetCompletionDay, state.currentRamadanDay]);
 
-  const diffUnits = useMemo(() => {
-    const expected = (store.maxUnits / state.targetCompletionDay) * state.currentRamadanDay;
-    return Math.floor(state.currentTotalCompleted - expected);
-  }, [state.currentTotalCompleted, state.targetCompletionDay, state.currentRamadanDay, store.maxUnits]);
+  const todaysTarget = Math.max(0, expectedByToday - state.currentTotalCompleted);
+  const diffUnits = state.currentTotalCompleted - expectedByToday;
+  const isOnTrack = diffUnits >= 0;
 
   const recentSessions = state.sessions.slice(0, 5);
 
@@ -91,8 +89,8 @@ export default function Dashboard() {
 
     // We need to check post-log state. Since setState is async, use targetAbs directly.
     const newTotal = Math.min(TOTAL_RUKUS, Math.max(prevTotal, targetAbs));
-    const newExpected = (store.maxUnits / state.ramadanTotalDays) * state.currentRamadanDay;
-    const isNowOnTrack = newTotal >= Math.floor(newExpected);
+    const newExpected = Math.round((store.maxUnits / state.targetCompletionDay) * state.currentRamadanDay);
+    const isNowOnTrack = newTotal >= newExpected;
 
     if (newTotal >= TOTAL_RUKUS && prevTotal < TOTAL_RUKUS) {
       triggerKhatamCelebration();
@@ -219,7 +217,7 @@ export default function Dashboard() {
               <div className="relative z-10">
                 <h3 className="text-accent-foreground/70 text-sm font-medium mb-1">Today's Target</h3>
                 <div className="text-3xl font-bold mb-1">
-                  {Math.ceil(store.dailyRequired)} <span className="text-lg font-normal opacity-80">{formatUnitName(2)}</span>
+                  {todaysTarget} <span className="text-lg font-normal opacity-80">{formatUnitName(2)}</span>
                 </div>
                 <p className="text-xs text-accent-foreground/60">
                   To finish by <strong>Day {state.targetCompletionDay}</strong> ({store.daysUntilTarget} days left)
