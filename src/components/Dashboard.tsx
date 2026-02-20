@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useStore } from '@/lib/store';
-import { SURAH_NAMES, SURAH_RUKU_COUNTS, TOTAL_RUKUS, TARAWEEH_27_NIGHT_RUKUS, getAbsoluteRuku, getRelativeRuku } from '@/lib/quran-data';
+import { SURAH_NAMES, SURAH_RUKU_COUNTS, TOTAL_RUKUS, getAbsoluteRuku, getRelativeRuku } from '@/lib/quran-data';
 import { BookOpen, ChevronLeft, ChevronRight, Plus, Trash2, RotateCcw, X, CheckCircle2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -37,41 +37,15 @@ export default function Dashboard() {
     return Math.ceil(currentDay + remaining / rate);
   }, [state.currentTotalCompleted, state.currentRamadanDay, store.remainingUnits]);
 
-  // How much was read TODAY (current Ramadan day)
-  const todayRead = useMemo(() => {
-    return state.sessions
-      .filter(s => s.ramadanDay === state.currentRamadanDay)
-      .reduce((sum, s) => sum + s.unitsRead, 0);
-  }, [state.sessions, state.currentRamadanDay]);
+  const isOnTrack = useMemo(() => {
+    const expected = (store.maxUnits / state.ramadanTotalDays) * state.currentRamadanDay;
+    return state.currentTotalCompleted >= Math.floor(expected);
+  }, [state.currentTotalCompleted, state.ramadanTotalDays, state.currentRamadanDay, store.maxUnits]);
 
-  // Stable daily target: computed as if nothing was read today
-  const todayTarget = useMemo(() => {
-    const completedBeforeToday = state.currentTotalCompleted - todayRead;
-    const remBeforeToday = Math.max(0, store.maxUnits - completedBeforeToday);
-    const strat = state.strategyMode;
-
-    if (strat === 'taraweeh') {
-      const targetCumulative = TARAWEEH_27_NIGHT_RUKUS[state.currentRamadanDay - 1] || TOTAL_RUKUS;
-      return Math.max(0, targetCumulative - completedBeforeToday);
-    }
-    if (strat === 'custom') return state.customDailyTarget;
-
-    let daysAvail = Math.max(1, state.targetCompletionDay - state.currentRamadanDay + 1);
-    if (daysAvail <= 0 && remBeforeToday > 0) {
-      daysAvail = Math.max(1, state.ramadanTotalDays - state.currentRamadanDay + 1);
-    }
-    daysAvail = Math.max(1, daysAvail);
-
-    const base = remBeforeToday / daysAvail;
-    if (strat === 'front') return daysAvail > 15 ? base * 1.25 : base * 0.8;
-    if (strat === 'back') return daysAvail <= 10 ? base * 1.5 : base * 0.8;
-    return base; // balanced
-  }, [state.currentTotalCompleted, todayRead, store.maxUnits, state.strategyMode, state.currentRamadanDay, state.targetCompletionDay, state.ramadanTotalDays, state.customDailyTarget]);
-
-  // Status: simple Target - Read
-  const statusRemaining = Math.ceil(todayTarget) - todayRead;
-  const isOnTrack = statusRemaining <= 0;
-  const diffUnits = -statusRemaining; // positive = ahead, negative = behind
+  const diffUnits = useMemo(() => {
+    const expected = (store.maxUnits / state.ramadanTotalDays) * state.currentRamadanDay;
+    return Math.round(state.currentTotalCompleted - expected);
+  }, [state.currentTotalCompleted, state.ramadanTotalDays, state.currentRamadanDay, store.maxUnits]);
 
   const recentSessions = state.sessions.slice(0, 5);
 
@@ -110,18 +84,19 @@ export default function Dashboard() {
 
   const submitLog = () => {
     const prevTotal = state.currentTotalCompleted;
-    const wasBehind = statusRemaining > 0;
+    const wasOnTrack = isOnTrack;
     const targetAbs = getAbsoluteRuku(inputSurah, inputRuku);
     store.logAbsolute(targetAbs);
     setShowLogModal(false);
 
+    // We need to check post-log state. Since setState is async, use targetAbs directly.
     const newTotal = Math.min(TOTAL_RUKUS, Math.max(prevTotal, targetAbs));
-    const newTodayRead = todayRead + (newTotal - prevTotal);
-    const isNowOnTrack = newTodayRead >= Math.ceil(todayTarget);
+    const newExpected = (store.maxUnits / state.ramadanTotalDays) * state.currentRamadanDay;
+    const isNowOnTrack = newTotal >= Math.floor(newExpected);
 
     if (newTotal >= TOTAL_RUKUS && prevTotal < TOTAL_RUKUS) {
       triggerKhatamCelebration();
-    } else if (wasBehind && isNowOnTrack) {
+    } else if (!wasOnTrack && isNowOnTrack) {
       triggerTargetMetCelebration();
     } else if (newTotal > prevTotal) {
       triggerSmallCelebration();
@@ -244,7 +219,7 @@ export default function Dashboard() {
               <div className="relative z-10">
                 <h3 className="text-accent-foreground/70 text-sm font-medium mb-1">Today's Target</h3>
                 <div className="text-3xl font-bold mb-1">
-                  {Math.ceil(todayTarget)} <span className="text-lg font-normal opacity-80">{formatUnitName(2)}</span>
+                  {Math.ceil(store.dailyRequired)} <span className="text-lg font-normal opacity-80">{formatUnitName(2)}</span>
                 </div>
                 <p className="text-xs text-accent-foreground/60">
                   To finish by <strong>Day {state.targetCompletionDay}</strong> ({store.daysUntilTarget} days left)
@@ -275,27 +250,28 @@ export default function Dashboard() {
               <>
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-muted-foreground text-sm font-medium">Status</h3>
-                  {statusRemaining <= 0 ? (
+                  {isOnTrack ? (
                     <span className="px-2 py-1 bg-primary/10 text-primary text-xs font-bold rounded">ON TRACK</span>
                   ) : (
                     <span className="px-2 py-1 bg-destructive/10 text-destructive text-xs font-bold rounded">BEHIND</span>
                   )}
                 </div>
-                <div className="text-foreground font-medium">
-                  <span className="text-sm text-muted-foreground">Target: {Math.ceil(todayTarget)} — Read: {todayRead} = </span>
-                  {statusRemaining <= 0 ? (
-                    <span className="text-primary font-bold">{Math.abs(statusRemaining)} ahead</span>
-                  ) : (
-                    <span className="text-destructive font-bold">{statusRemaining} remaining</span>
-                  )}
-                </div>
-                {statusRemaining > 0 && (
-                  <div className="text-muted-foreground text-xs mt-2 p-2 bg-secondary rounded border border-border">
-                    💡 <strong>Tip:</strong> {getCatchUpPlan()}
-                  </div>
-                )}
-                {statusRemaining <= 0 && (
-                  <div className="text-muted-foreground text-xs mt-1">Excellent consistency.</div>
+                {isOnTrack ? (
+                  <>
+                    <div className="text-foreground font-medium">
+                      You are <span className="text-primary font-bold">{diffUnits}</span> {formatUnitName(2)} ahead.
+                    </div>
+                    <div className="text-muted-foreground text-xs mt-1">Excellent consistency.</div>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-foreground font-medium">
+                      Behind by <span className="text-destructive font-bold">{Math.abs(diffUnits)}</span> {formatUnitName(2)}.
+                    </div>
+                    <div className="text-muted-foreground text-xs mt-2 p-2 bg-secondary rounded border border-border">
+                      💡 <strong>Tip:</strong> {getCatchUpPlan()}
+                    </div>
+                  </>
                 )}
               </>
             )}
