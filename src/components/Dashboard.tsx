@@ -38,14 +38,14 @@ export default function Dashboard() {
   }, [state.currentTotalCompleted, state.currentRamadanDay, store.remainingUnits]);
 
   const isOnTrack = useMemo(() => {
-    const expected = (store.maxUnits / state.ramadanTotalDays) * state.currentRamadanDay;
+    const expected = (store.maxUnits / state.targetCompletionDay) * state.currentRamadanDay;
     return state.currentTotalCompleted >= Math.floor(expected);
-  }, [state.currentTotalCompleted, state.ramadanTotalDays, state.currentRamadanDay, store.maxUnits]);
+  }, [state.currentTotalCompleted, state.targetCompletionDay, state.currentRamadanDay, store.maxUnits]);
 
   const diffUnits = useMemo(() => {
-    const expected = (store.maxUnits / state.ramadanTotalDays) * state.currentRamadanDay;
+    const expected = (store.maxUnits / state.targetCompletionDay) * state.currentRamadanDay;
     return Math.round(state.currentTotalCompleted - expected);
-  }, [state.currentTotalCompleted, state.ramadanTotalDays, state.currentRamadanDay, store.maxUnits]);
+  }, [state.currentTotalCompleted, state.targetCompletionDay, state.currentRamadanDay, store.maxUnits]);
 
   const recentSessions = state.sessions.slice(0, 5);
 
