@@ -44,7 +44,7 @@ export default function Dashboard() {
 
   const diffUnits = useMemo(() => {
     const expected = (store.maxUnits / state.targetCompletionDay) * state.currentRamadanDay;
-    return Math.round(state.currentTotalCompleted - expected);
+    return Math.floor(state.currentTotalCompleted - expected);
   }, [state.currentTotalCompleted, state.targetCompletionDay, state.currentRamadanDay, store.maxUnits]);
 
   const recentSessions = state.sessions.slice(0, 5);
@@ -71,7 +71,7 @@ export default function Dashboard() {
     const remDays = store.remainingDays;
     if (remDays === 0) return "Ramadan is over!";
     const extraPerDay = Math.ceil(needed / remDays);
-    return `Add ${extraPerDay} extra Rukus per day to your target.`;
+    return `Read ${extraPerDay} extra Rukus per day to catch up.`;
   };
 
   const openLog = () => {
