@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { StoreProvider } from "@/lib/store";
 import Index from "./pages/Index";
+import HowToFindRuku from "./pages/HowToFindRuku";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -18,6 +19,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/how-to-find-ruku" element={<HowToFindRuku />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
