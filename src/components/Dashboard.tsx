@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react';
 import { useStore } from '@/lib/store';
 import { SURAH_NAMES, SURAH_RUKU_COUNTS, TOTAL_RUKUS, TARAWEEH_27_NIGHT_RUKUS, getAbsoluteRuku, getRelativeRuku } from '@/lib/quran-data';
-import { BookOpen, ChevronLeft, ChevronRight, Plus, Trash2, RotateCcw, X, CheckCircle2 } from 'lucide-react';
+import { BookOpen, ChevronLeft, ChevronRight, Plus, Trash2, RotateCcw, X, CheckCircle2, HelpCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import confetti from 'canvas-confetti';
 
 function formatUnitName(count: number) {
@@ -11,6 +12,7 @@ function formatUnitName(count: number) {
 export default function Dashboard() {
   const store = useStore();
   const { state } = store;
+  const navigate = useNavigate();
 
   const [showLogModal, setShowLogModal] = useState(false);
   const [showKhatamModal, setShowKhatamModal] = useState(false);
@@ -156,6 +158,13 @@ export default function Dashboard() {
             <span className="font-bold text-foreground tracking-tight">Ramadan Planner</span>
           </div>
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/how-to-find-ruku')}
+              className="p-1.5 text-muted-foreground hover:text-primary transition-colors"
+              title="How to find Ruku numbers"
+            >
+              <HelpCircle size={18} />
+            </button>
             <button onClick={store.prevDay} className="p-1 text-muted-foreground hover:text-primary transition-colors">
               <ChevronLeft size={20} />
             </button>
