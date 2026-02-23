@@ -116,7 +116,7 @@ export default function HowToFindRuku() {
             <li>The Ruku number <strong className="text-foreground">resets to 1</strong> at the start of each new Surah.</li>
             <li>Some shorter Surahs have only <strong className="text-foreground">1 Ruku</strong>, while Al-Baqarah has <strong className="text-foreground">40 Rukus</strong>.</li>
             <li>If you can't find the ع symbol, check a different print edition — some digital apps may not show it.</li>
-            <li>The number <em>below</em> the ع is the Ayah number, not the Ruku number.</li>
+            
           </ul>
         </section>
 
