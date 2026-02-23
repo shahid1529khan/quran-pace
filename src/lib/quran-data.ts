@@ -43,9 +43,9 @@ export const SURAH_RUKU_COUNTS = [
 ];
 
 export const TARAWEEH_27_NIGHT_RUKUS = [
-  20, 42, 65, 86, 110, 129, 149, 166, 188, 211,
-  235, 258, 284, 305, 328, 351, 366, 383, 398, 416,
-  431, 451, 475, 496, 517, 536, 558
+  21, 42, 61, 82, 101, 123, 145, 167, 187, 208,
+  233, 261, 281, 302, 326, 347, 366, 384, 400, 420,
+  439, 458, 477, 497, 517, 536, 558
 ];
 
 export function getAbsoluteRuku(surah: number, rukuInSurah: number): number {
