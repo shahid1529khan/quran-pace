@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useStore } from '@/lib/store';
-import { SURAH_NAMES, SURAH_RUKU_COUNTS, TOTAL_RUKUS, getAbsoluteRuku, getRelativeRuku } from '@/lib/quran-data';
+import { SURAH_NAMES, SURAH_RUKU_COUNTS, TOTAL_RUKUS, TARAWEEH_27_NIGHT_RUKUS, getAbsoluteRuku, getRelativeRuku } from '@/lib/quran-data';
 import { BookOpen, ChevronLeft, ChevronRight, Plus, Trash2, RotateCcw, X, CheckCircle2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -37,15 +37,21 @@ export default function Dashboard() {
     return Math.ceil(currentDay + remaining / rate);
   }, [state.currentTotalCompleted, state.currentRamadanDay, store.remainingUnits]);
 
+  const expectedByNow = useMemo(() => {
+    if (state.strategyMode === 'taraweeh') {
+      if (state.currentRamadanDay > 27) return TOTAL_RUKUS;
+      return TARAWEEH_27_NIGHT_RUKUS[state.currentRamadanDay - 1] || 0;
+    }
+    return (store.maxUnits / state.targetCompletionDay) * state.currentRamadanDay;
+  }, [state.strategyMode, state.currentRamadanDay, state.targetCompletionDay, store.maxUnits]);
+
   const isOnTrack = useMemo(() => {
-    const expected = (store.maxUnits / state.ramadanTotalDays) * state.currentRamadanDay;
-    return state.currentTotalCompleted >= Math.floor(expected);
-  }, [state.currentTotalCompleted, state.ramadanTotalDays, state.currentRamadanDay, store.maxUnits]);
+    return state.currentTotalCompleted >= Math.floor(expectedByNow);
+  }, [state.currentTotalCompleted, expectedByNow]);
 
   const diffUnits = useMemo(() => {
-    const expected = (store.maxUnits / state.ramadanTotalDays) * state.currentRamadanDay;
-    return Math.round(state.currentTotalCompleted - expected);
-  }, [state.currentTotalCompleted, state.ramadanTotalDays, state.currentRamadanDay, store.maxUnits]);
+    return Math.round(state.currentTotalCompleted - expectedByNow);
+  }, [state.currentTotalCompleted, expectedByNow]);
 
   const recentSessions = state.sessions.slice(0, 5);
 
