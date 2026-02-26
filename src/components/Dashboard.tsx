@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useStore } from '@/lib/store';
 import { SURAH_NAMES, SURAH_RUKU_COUNTS, TOTAL_RUKUS, TARAWEEH_27_NIGHT_RUKUS, getAbsoluteRuku, getRelativeRuku } from '@/lib/quran-data';
-import { BookOpen, ChevronLeft, ChevronRight, Plus, Trash2, RotateCcw, X, CheckCircle2, HelpCircle } from 'lucide-react';
+import { BookOpen, ChevronLeft, ChevronRight, Plus, Trash2, RotateCcw, X, CheckCircle2, HelpCircle, TableProperties } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import confetti from 'canvas-confetti';
 
@@ -158,6 +158,13 @@ export default function Dashboard() {
             <span className="font-bold text-foreground tracking-tight">Ramadan Planner</span>
           </div>
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/juz-ruku-reference')}
+              className="p-1.5 text-muted-foreground hover:text-primary transition-colors"
+              title="Juz-Ruku Reference"
+            >
+              <TableProperties size={18} />
+            </button>
             <button
               onClick={() => navigate('/how-to-find-ruku')}
               className="p-1.5 text-muted-foreground hover:text-primary transition-colors"

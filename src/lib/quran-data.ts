@@ -68,3 +68,46 @@ export function getRelativeRuku(absolute: number): { surah: number; ruku: number
   }
   return { surah: 114, ruku: 1 };
 }
+
+// Juz-Ruku reference data (verified via Quran Foundation API)
+// Each entry: [juzNumber, startRuku, endRuku, surahs covered string]
+// Note: Some boundary rukus may span across Juz divisions
+export const JUZ_RUKU_DATA: Array<{
+  juz: number;
+  name: string;
+  startRuku: number;
+  endRuku: number;
+  rukuCount: number;
+  surahs: string;
+}> = [
+  { juz: 1,  name: "Alif Lam Meem",       startRuku: 1,   endRuku: 17,  rukuCount: 17, surahs: "Al-Fatihah – Al-Baqarah (1–141)" },
+  { juz: 2,  name: "Sayaqool",             startRuku: 18,  endRuku: 33,  rukuCount: 16, surahs: "Al-Baqarah (142–252)" },
+  { juz: 3,  name: "Tilkal Rusul",         startRuku: 34,  endRuku: 50,  rukuCount: 17, surahs: "Al-Baqarah (253–286) – Al-Imran (1–92)" },
+  { juz: 4,  name: "Lan Tana Loo",         startRuku: 51,  endRuku: 64,  rukuCount: 14, surahs: "Al-Imran (93–200) – An-Nisa (1–23)" },
+  { juz: 5,  name: "Wal Mohsanat",         startRuku: 65,  endRuku: 81,  rukuCount: 17, surahs: "An-Nisa (24–147)" },
+  { juz: 6,  name: "La Yuhibbullah",       startRuku: 82,  endRuku: 95,  rukuCount: 14, surahs: "An-Nisa (148–176) – Al-Ma'idah (1–81)" },
+  { juz: 7,  name: "Wa Iza Samiu",         startRuku: 96,  endRuku: 114, rukuCount: 19, surahs: "Al-Ma'idah (82–120) – Al-An'am (1–110)" },
+  { juz: 8,  name: "Wa Lau Annana",        startRuku: 115, endRuku: 131, rukuCount: 17, surahs: "Al-An'am (111–165) – Al-A'raf (1–87)" },
+  { juz: 9,  name: "Qalal Malao",          startRuku: 132, endRuku: 149, rukuCount: 18, surahs: "Al-A'raf (88–206) – Al-Anfal (1–40)" },
+  { juz: 10, name: "Wa A'lamu",            startRuku: 150, endRuku: 166, rukuCount: 17, surahs: "Al-Anfal (41–75) – At-Tawbah (1–92)" },
+  { juz: 11, name: "Yatazeroon",           startRuku: 167, endRuku: 182, rukuCount: 16, surahs: "At-Tawbah (93–129) – Yunus – Hud (1–5)" },
+  { juz: 12, name: "Wa Mamin Da'abat",     startRuku: 183, endRuku: 198, rukuCount: 16, surahs: "Hud (6–123) – Yusuf (1–52)" },
+  { juz: 13, name: "Wa Ma Ubrioo",         startRuku: 199, endRuku: 217, rukuCount: 19, surahs: "Yusuf (53–111) – Ar-Ra'd – Ibrahim" },
+  { juz: 14, name: "Rubama",               startRuku: 218, endRuku: 239, rukuCount: 22, surahs: "Al-Hijr – An-Nahl" },
+  { juz: 15, name: "Subhanallazi",         startRuku: 240, endRuku: 260, rukuCount: 21, surahs: "Al-Isra – Al-Kahf (1–74)" },
+  { juz: 16, name: "Qal Alam",             startRuku: 261, endRuku: 277, rukuCount: 17, surahs: "Al-Kahf (75–110) – Maryam – Ta-Ha" },
+  { juz: 17, name: "Aqtarabo",             startRuku: 278, endRuku: 294, rukuCount: 17, surahs: "Al-Anbiya – Al-Hajj" },
+  { juz: 18, name: "Qadd Aflaha",          startRuku: 295, endRuku: 311, rukuCount: 17, surahs: "Al-Mu'minun – An-Nur – Al-Furqan (1–20)" },
+  { juz: 19, name: "Wa Qalallazina",       startRuku: 312, endRuku: 329, rukuCount: 18, surahs: "Al-Furqan (21–77) – Ash-Shu'ara – An-Naml (1–55)" },
+  { juz: 20, name: "A'man Khalaq",         startRuku: 330, endRuku: 346, rukuCount: 17, surahs: "An-Naml (56–93) – Al-Qasas – Al-Ankabut (1–45)" },
+  { juz: 21, name: "Utlu Ma Oohi",         startRuku: 347, endRuku: 365, rukuCount: 19, surahs: "Al-Ankabut (46–69) – Ar-Rum – Luqman – As-Sajdah – Al-Ahzab (1–30)" },
+  { juz: 22, name: "Wa Manyaqnut",         startRuku: 366, endRuku: 383, rukuCount: 18, surahs: "Al-Ahzab (31–73) – Saba – Fatir – Ya-Sin (1–27)" },
+  { juz: 23, name: "Wa Mali",              startRuku: 384, endRuku: 400, rukuCount: 17, surahs: "Ya-Sin (28–83) – As-Saffat – Sad – Az-Zumar (1–31)" },
+  { juz: 24, name: "Faman Azlam",          startRuku: 401, endRuku: 419, rukuCount: 19, surahs: "Az-Zumar (32–75) – Ghafir – Fussilat (1–46)" },
+  { juz: 25, name: "Elahe Yuruddo",        startRuku: 420, endRuku: 439, rukuCount: 20, surahs: "Fussilat (47–54) – Ash-Shura – Az-Zukhruf – Ad-Dukhan – Al-Jathiyah" },
+  { juz: 26, name: "Ha'a Meem",            startRuku: 440, endRuku: 457, rukuCount: 18, surahs: "Al-Ahqaf – Muhammad – Al-Fath – Al-Hujurat – Qaf – Adh-Dhariyat (1–30)" },
+  { juz: 27, name: "Qala Fama Khatbukum",  startRuku: 458, endRuku: 477, rukuCount: 20, surahs: "Adh-Dhariyat (31–60) – At-Tur – An-Najm – Al-Qamar – Ar-Rahman – Al-Waqi'ah – Al-Hadid" },
+  { juz: 28, name: "Qadd Sami Allah",      startRuku: 478, endRuku: 497, rukuCount: 20, surahs: "Al-Mujadila – Al-Hashr – Al-Mumtahanah – As-Saff – Al-Jumu'ah – Al-Munafiqun – At-Taghabun – At-Talaq – At-Tahrim" },
+  { juz: 29, name: "Tabarakallazi",        startRuku: 498, endRuku: 519, rukuCount: 22, surahs: "Al-Mulk – Al-Qalam – Al-Haqqah – Al-Ma'arij – Nuh – Al-Jinn – Al-Muzzammil – Al-Muddaththir – Al-Qiyamah – Al-Insan – Al-Mursalat" },
+  { juz: 30, name: "Amma Yatasa'aloon",    startRuku: 520, endRuku: 558, rukuCount: 39, surahs: "An-Naba – An-Nas (37 Surahs)" },
+];
