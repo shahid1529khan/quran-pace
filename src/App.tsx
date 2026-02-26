@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { StoreProvider } from "@/lib/store";
 import Index from "./pages/Index";
 import HowToFindRuku from "./pages/HowToFindRuku";
+import JuzRukuReference from "./pages/JuzRukuReference";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,6 +21,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/how-to-find-ruku" element={<HowToFindRuku />} />
+            <Route path="/juz-ruku-reference" element={<JuzRukuReference />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
