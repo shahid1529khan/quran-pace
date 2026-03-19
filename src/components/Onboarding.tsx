@@ -8,7 +8,7 @@ export default function Onboarding() {
   const [days, setDays] = useState(30);
   const [currentDay, setCurrentDay] = useState(1);
   const [targetDay, setTargetDay] = useState(30);
-  const [customDays, setCustomDays] = useState(30);
+  const [customDays, setCustomDays] = useState<number | string>(30);
   const [weekendHeavy, setWeekendHeavy] = useState(false);
 
   useEffect(() => {
@@ -20,15 +20,17 @@ export default function Onboarding() {
     if (strategy === 'custom_plan') setWeekendHeavy(false);
   }, [strategy]);
 
+  const numDays = Number(customDays) || 1;
+
   const save = () => {
     if (strategy === 'custom_plan') {
       store.completeOnboarding({
         progressMode: 'ruku',
         strategyMode: 'custom_plan',
-        ramadanTotalDays: customDays,
+        ramadanTotalDays: numDays,
         currentRamadanDay: currentDay,
-        targetCompletionDay: customDays,
-        customTotalDays: customDays,
+        targetCompletionDay: numDays,
+        customTotalDays: numDays,
         weekendHeavy,
         customStartDate: new Date().toISOString().split('T')[0]
       });
@@ -92,7 +94,8 @@ export default function Onboarding() {
                     min={1}
                     max={365}
                     value={customDays}
-                    onChange={e => setCustomDays(Math.max(1, +e.target.value))}
+                    onChange={e => setCustomDays(e.target.value === '' ? '' : Math.max(1, +e.target.value))}
+                    onBlur={() => { if (customDays === '' || Number(customDays) < 1) setCustomDays(1); }}
                     className="w-full bg-secondary border border-border rounded-lg px-4 py-2 text-foreground"
                   />
                 </div>
@@ -101,9 +104,9 @@ export default function Onboarding() {
                   <input
                     type="number"
                     min={1}
-                    max={customDays}
+                    max={numDays}
                     value={currentDay}
-                    onChange={e => setCurrentDay(Math.max(1, Math.min(customDays, +e.target.value)))}
+                    onChange={e => setCurrentDay(Math.max(1, Math.min(numDays, +e.target.value)))}
                     className="w-full bg-secondary border border-border rounded-lg px-4 py-2 text-foreground"
                   />
                 </div>
@@ -136,8 +139,8 @@ export default function Onboarding() {
               <div className="animate-fade-slide-in-delay-3 bg-secondary/50 border border-border rounded-lg px-4 py-3">
                 <p className="text-xs text-muted-foreground">
                   {weekendHeavy
-                    ? `~${Math.round(558 / (customDays * 0.71 + customDays * 0.29 * 1.4))} Rukus/weekday · ~${Math.round((558 / (customDays * 0.71 + customDays * 0.29 * 1.4)) * 1.4)} Rukus/weekend`
-                    : `~${Math.round(558 / customDays)} Rukus/day for ${customDays} days`
+                    ? `~${Math.round(558 / (numDays * 0.71 + numDays * 0.29 * 1.4))} Rukus/weekday · ~${Math.round((558 / (numDays * 0.71 + numDays * 0.29 * 1.4)) * 1.4)} Rukus/weekend`
+                    : `~${Math.round(558 / numDays)} Rukus/day for ${numDays} days`
                   }
                 </p>
               </div>
