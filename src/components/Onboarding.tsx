@@ -20,15 +20,17 @@ export default function Onboarding() {
     if (strategy === 'custom_plan') setWeekendHeavy(false);
   }, [strategy]);
 
+  const numDays = Number(customDays) || 1;
+
   const save = () => {
     if (strategy === 'custom_plan') {
       store.completeOnboarding({
         progressMode: 'ruku',
         strategyMode: 'custom_plan',
-        ramadanTotalDays: customDays,
+        ramadanTotalDays: numDays,
         currentRamadanDay: currentDay,
-        targetCompletionDay: customDays,
-        customTotalDays: customDays,
+        targetCompletionDay: numDays,
+        customTotalDays: numDays,
         weekendHeavy,
         customStartDate: new Date().toISOString().split('T')[0]
       });
