@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useCallback, useMemo } from
 import { TOTAL_RUKUS, TARAWEEH_27_NIGHT_RUKUS } from './quran-data';
 
 export type ProgressMode = 'ruku';
-export type StrategyMode = 'balanced' | 'front' | 'back' | 'custom' | 'taraweeh';
+export type StrategyMode = 'balanced' | 'front' | 'back' | 'custom' | 'taraweeh' | 'custom_plan';
 
 export interface DailyLog {
   day: number;
