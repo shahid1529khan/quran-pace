@@ -8,6 +8,8 @@ export default function Onboarding() {
   const [days, setDays] = useState(30);
   const [currentDay, setCurrentDay] = useState(1);
   const [targetDay, setTargetDay] = useState(30);
+  const [customDays, setCustomDays] = useState(30);
+  const [weekendHeavy, setWeekendHeavy] = useState(false);
 
   useEffect(() => {
     if (targetDay > days) setTargetDay(days);
@@ -15,16 +17,30 @@ export default function Onboarding() {
 
   useEffect(() => {
     if (strategy === 'taraweeh') setTargetDay(27);
+    if (strategy === 'custom_plan') setWeekendHeavy(false);
   }, [strategy]);
 
   const save = () => {
-    store.completeOnboarding({
-      progressMode: 'ruku',
-      strategyMode: strategy,
-      ramadanTotalDays: days,
-      currentRamadanDay: currentDay,
-      targetCompletionDay: targetDay
-    });
+    if (strategy === 'custom_plan') {
+      store.completeOnboarding({
+        progressMode: 'ruku',
+        strategyMode: 'custom_plan',
+        ramadanTotalDays: customDays,
+        currentRamadanDay: currentDay,
+        targetCompletionDay: customDays,
+        customTotalDays: customDays,
+        weekendHeavy,
+        customStartDate: new Date().toISOString().split('T')[0]
+      });
+    } else {
+      store.completeOnboarding({
+        progressMode: 'ruku',
+        strategyMode: strategy,
+        ramadanTotalDays: days,
+        currentRamadanDay: currentDay,
+        targetCompletionDay: targetDay
+      });
+    }
   };
 
   return (
