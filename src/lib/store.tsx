@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useCallback, useMemo } from
 import { TOTAL_RUKUS, TARAWEEH_27_NIGHT_RUKUS } from './quran-data';
 
 export type ProgressMode = 'ruku';
-export type StrategyMode = 'balanced' | 'front' | 'back' | 'custom' | 'taraweeh';
+export type StrategyMode = 'balanced' | 'front' | 'back' | 'custom' | 'taraweeh' | 'custom_plan';
 
 export interface DailyLog {
   day: number;
@@ -29,6 +29,9 @@ export interface UserState {
   progressMode: ProgressMode;
   strategyMode: StrategyMode;
   customDailyTarget: number;
+  customTotalDays: number;
+  weekendHeavy: boolean;
+  customStartDate: string | null;
   currentTotalCompleted: number;
   logs: DailyLog[];
   sessions: ReadingSession[];
@@ -45,6 +48,9 @@ const INITIAL_STATE: UserState = {
   progressMode: 'ruku',
   strategyMode: 'balanced',
   customDailyTarget: 20,
+  customTotalDays: 30,
+  weekendHeavy: false,
+  customStartDate: null,
   currentTotalCompleted: 0,
   logs: [],
   sessions: [],
@@ -155,6 +161,39 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       return Math.max(0, needed);
     }
 
+    if (strat === 'custom_plan') {
+      const totalDays = state.customTotalDays;
+      const daysLeft = Math.max(1, totalDays - currentDay + 1);
+
+      if (!state.weekendHeavy) {
+        return remUnits / daysLeft;
+      }
+
+      // Weekend-heavy: calculate remaining weekdays/weekends from current day
+      let weekdaysLeft = 0;
+      let weekendsLeft = 0;
+      const startDate = state.customStartDate ? new Date(state.customStartDate) : new Date();
+      for (let d = currentDay; d <= totalDays; d++) {
+        const date = new Date(startDate);
+        date.setDate(date.getDate() + (d - 1));
+        const dow = date.getDay();
+        if (dow === 0 || dow === 6) weekendsLeft++;
+        else weekdaysLeft++;
+      }
+
+      // Weekend days get 1.4x the weekday target
+      const factor = 1.4;
+      const effectiveDays = weekdaysLeft + weekendsLeft * factor;
+      const weekdayTarget = remUnits / Math.max(1, effectiveDays);
+
+      const todayDate = new Date(startDate);
+      todayDate.setDate(todayDate.getDate() + (currentDay - 1));
+      const todayDow = todayDate.getDay();
+      const isWeekend = todayDow === 0 || todayDow === 6;
+
+      return isWeekend ? weekdayTarget * factor : weekdayTarget;
+    }
+
     let daysAvail = Math.max(0, state.targetCompletionDay - currentDay + 1);
     if (daysAvail <= 0 && remUnits > 0) {
       daysAvail = Math.max(1, state.ramadanTotalDays - currentDay + 1);
@@ -166,7 +205,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     if (strat === 'front') return daysAvail > 15 ? base * 1.25 : base * 0.8;
     if (strat === 'back') return daysAvail <= 10 ? base * 1.5 : base * 0.8;
     return base;
-  }, [state.strategyMode, state.currentTotalCompleted, state.currentRamadanDay, state.targetCompletionDay, state.ramadanTotalDays, state.customDailyTarget, maxUnits]);
+  }, [state.strategyMode, state.currentTotalCompleted, state.currentRamadanDay, state.targetCompletionDay, state.ramadanTotalDays, state.customDailyTarget, state.customTotalDays, state.weekendHeavy, state.customStartDate, maxUnits]);
 
   const completeOnboarding = useCallback((settings: Partial<UserState>) => {
     persist({ ...state, ...settings, isOnboarded: true });
