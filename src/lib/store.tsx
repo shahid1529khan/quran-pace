@@ -29,6 +29,9 @@ export interface UserState {
   progressMode: ProgressMode;
   strategyMode: StrategyMode;
   customDailyTarget: number;
+  customTotalDays: number;
+  weekendHeavy: boolean;
+  customStartDate: string | null;
   currentTotalCompleted: number;
   logs: DailyLog[];
   sessions: ReadingSession[];
