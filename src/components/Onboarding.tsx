@@ -8,7 +8,7 @@ export default function Onboarding() {
   const [days, setDays] = useState(30);
   const [currentDay, setCurrentDay] = useState(1);
   const [targetDay, setTargetDay] = useState(30);
-  const [customDays, setCustomDays] = useState(30);
+  const [customDays, setCustomDays] = useState<number | string>(30);
   const [weekendHeavy, setWeekendHeavy] = useState(false);
 
   useEffect(() => {
