@@ -104,9 +104,9 @@ export default function Onboarding() {
                   <input
                     type="number"
                     min={1}
-                    max={customDays}
+                    max={numDays}
                     value={currentDay}
-                    onChange={e => setCurrentDay(Math.max(1, Math.min(customDays, +e.target.value)))}
+                    onChange={e => setCurrentDay(Math.max(1, Math.min(numDays, +e.target.value)))}
                     className="w-full bg-secondary border border-border rounded-lg px-4 py-2 text-foreground"
                   />
                 </div>
