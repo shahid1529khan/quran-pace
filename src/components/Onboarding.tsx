@@ -94,7 +94,8 @@ export default function Onboarding() {
                     min={1}
                     max={365}
                     value={customDays}
-                    onChange={e => setCustomDays(Math.max(1, +e.target.value))}
+                    onChange={e => setCustomDays(e.target.value === '' ? '' : Math.max(1, +e.target.value))}
+                    onBlur={() => { if (customDays === '' || Number(customDays) < 1) setCustomDays(1); }}
                     className="w-full bg-secondary border border-border rounded-lg px-4 py-2 text-foreground"
                   />
                 </div>
