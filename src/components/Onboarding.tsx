@@ -139,8 +139,8 @@ export default function Onboarding() {
               <div className="animate-fade-slide-in-delay-3 bg-secondary/50 border border-border rounded-lg px-4 py-3">
                 <p className="text-xs text-muted-foreground">
                   {weekendHeavy
-                    ? `~${Math.round(558 / (customDays * 0.71 + customDays * 0.29 * 1.4))} Rukus/weekday · ~${Math.round((558 / (customDays * 0.71 + customDays * 0.29 * 1.4)) * 1.4)} Rukus/weekend`
-                    : `~${Math.round(558 / customDays)} Rukus/day for ${customDays} days`
+                    ? `~${Math.round(558 / (numDays * 0.71 + numDays * 0.29 * 1.4))} Rukus/weekday · ~${Math.round((558 / (numDays * 0.71 + numDays * 0.29 * 1.4)) * 1.4)} Rukus/weekend`
+                    : `~${Math.round(558 / numDays)} Rukus/day for ${numDays} days`
                   }
                 </p>
               </div>
