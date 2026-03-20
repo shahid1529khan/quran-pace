@@ -316,7 +316,7 @@ export default function Dashboard() {
           <div className="stat-card">
             <div className="text-muted-foreground text-xs font-medium uppercase mb-1">Est. Finish</div>
             {projectedFinishDay > 0 && !isCompleted ? (
-              <div className={`text-2xl font-bold ${projectedFinishDay <= state.ramadanTotalDays ? 'text-primary' : 'text-destructive'}`}>
+              <div className={`text-2xl font-bold ${projectedFinishDay <= totalDays ? 'text-primary' : 'text-destructive'}`}>
                 Day {projectedFinishDay}
               </div>
             ) : isCompleted ? (
