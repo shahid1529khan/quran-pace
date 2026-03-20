@@ -164,7 +164,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const dailyRequired = useMemo(() => {
     const strat = state.strategyMode;
     const currentCompleted = state.currentTotalCompleted;
-    const currentDay = state.currentRamadanDay;
+    const currentDay = effectiveCurrentDay;
     const remUnits = Math.max(0, maxUnits - currentCompleted);
 
     if (strat === 'taraweeh') {
