@@ -102,7 +102,7 @@ export default function Dashboard() {
 
     // We need to check post-log state. Since setState is async, use targetAbs directly.
     const newTotal = Math.min(TOTAL_RUKUS, Math.max(prevTotal, targetAbs));
-    const newExpected = (store.maxUnits / state.ramadanTotalDays) * state.currentRamadanDay;
+    const newExpected = (store.maxUnits / totalDays) * currentDay;
     const isNowOnTrack = newTotal >= Math.floor(newExpected);
 
     if (newTotal >= TOTAL_RUKUS && prevTotal < TOTAL_RUKUS) {
