@@ -218,7 +218,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     if (strat === 'front') return daysAvail > 15 ? base * 1.25 : base * 0.8;
     if (strat === 'back') return daysAvail <= 10 ? base * 1.5 : base * 0.8;
     return base;
-  }, [state.strategyMode, state.currentTotalCompleted, state.currentRamadanDay, state.targetCompletionDay, state.ramadanTotalDays, state.customDailyTarget, state.customTotalDays, state.weekendHeavy, state.customStartDate, maxUnits]);
+  }, [state.strategyMode, state.currentTotalCompleted, effectiveCurrentDay, state.targetCompletionDay, state.ramadanTotalDays, state.customDailyTarget, state.customTotalDays, state.weekendHeavy, state.customStartDate, maxUnits]);
 
   const completeOnboarding = useCallback((settings: Partial<UserState>) => {
     persist({ ...state, ...settings, isOnboarded: true });
