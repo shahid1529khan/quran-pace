@@ -30,22 +30,25 @@ export default function Dashboard() {
 
   const currentSurahMaxRukus = SURAH_RUKU_COUNTS[inputSurah - 1] || 1;
 
+  const currentDay = store.effectiveCurrentDay;
+  const totalDays = state.strategyMode === 'custom_plan' ? state.customTotalDays : state.ramadanTotalDays;
+  const isCustomPlan = state.strategyMode === 'custom_plan';
+
   const projectedFinishDay = useMemo(() => {
     const total = state.currentTotalCompleted;
-    const currentDay = state.currentRamadanDay;
     if (currentDay <= 1 || total === 0) return 0;
     const rate = total / currentDay;
     const remaining = store.remainingUnits;
     return Math.ceil(currentDay + remaining / rate);
-  }, [state.currentTotalCompleted, state.currentRamadanDay, store.remainingUnits]);
+  }, [state.currentTotalCompleted, currentDay, store.remainingUnits]);
 
   const expectedByNow = useMemo(() => {
     if (state.strategyMode === 'taraweeh') {
-      if (state.currentRamadanDay > 27) return TOTAL_RUKUS;
-      return TARAWEEH_27_NIGHT_RUKUS[state.currentRamadanDay - 1] || 0;
+      if (currentDay > 27) return TOTAL_RUKUS;
+      return TARAWEEH_27_NIGHT_RUKUS[currentDay - 1] || 0;
     }
-    return (store.maxUnits / state.targetCompletionDay) * state.currentRamadanDay;
-  }, [state.strategyMode, state.currentRamadanDay, state.targetCompletionDay, store.maxUnits]);
+    return (store.maxUnits / state.targetCompletionDay) * currentDay;
+  }, [state.strategyMode, currentDay, state.targetCompletionDay, store.maxUnits]);
 
   const isOnTrack = useMemo(() => {
     return state.currentTotalCompleted >= Math.floor(expectedByNow);
