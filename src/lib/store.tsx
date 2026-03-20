@@ -142,10 +142,23 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     saveState(newState);
   }, []);
 
+  // Auto-calculate current day for custom_plan based on start date
+  const effectiveCurrentDay = useMemo(() => {
+    if (state.strategyMode === 'custom_plan' && state.customStartDate) {
+      const start = new Date(state.customStartDate + 'T00:00:00');
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      const diffMs = now.getTime() - start.getTime();
+      const daysSinceStart = Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
+      return Math.max(1, Math.min(state.customTotalDays, daysSinceStart));
+    }
+    return state.currentRamadanDay;
+  }, [state.strategyMode, state.customStartDate, state.customTotalDays, state.currentRamadanDay]);
+
   const maxUnits = TOTAL_RUKUS;
   const remainingUnits = Math.max(0, maxUnits - state.currentTotalCompleted);
-  const remainingDays = Math.max(1, state.ramadanTotalDays - state.currentRamadanDay + 1);
-  const daysUntilTarget = Math.max(0, state.targetCompletionDay - state.currentRamadanDay + 1);
+  const remainingDays = Math.max(1, state.ramadanTotalDays - effectiveCurrentDay + 1);
+  const daysUntilTarget = Math.max(0, state.targetCompletionDay - effectiveCurrentDay + 1);
   const percentage = Math.min(100, Math.max(0, (state.currentTotalCompleted / maxUnits) * 100));
 
   const dailyRequired = useMemo(() => {
