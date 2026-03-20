@@ -175,15 +175,19 @@ export default function Dashboard() {
             >
               <HelpCircle size={18} />
             </button>
-            <button onClick={store.prevDay} className="p-1 text-muted-foreground hover:text-primary transition-colors">
-              <ChevronLeft size={20} />
-            </button>
+            {!isCustomPlan && (
+              <button onClick={store.prevDay} className="p-1 text-muted-foreground hover:text-primary transition-colors">
+                <ChevronLeft size={20} />
+              </button>
+            )}
             <span className="font-medium text-muted-foreground text-sm">
-              Day {state.currentRamadanDay} <span className="text-muted-foreground/60 font-normal">/ {state.ramadanTotalDays}</span>
+              Day {currentDay} <span className="text-muted-foreground/60 font-normal">/ {totalDays}</span>
             </span>
-            <button onClick={store.nextDay} className="p-1 text-muted-foreground hover:text-primary transition-colors">
-              <ChevronRight size={20} />
-            </button>
+            {!isCustomPlan && (
+              <button onClick={store.nextDay} className="p-1 text-muted-foreground hover:text-primary transition-colors">
+                <ChevronRight size={20} />
+              </button>
+            )}
           </div>
         </div>
       </header>
