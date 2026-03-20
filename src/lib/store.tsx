@@ -330,6 +330,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const value: StoreContextType = {
     state,
     maxUnits,
+    effectiveCurrentDay,
     remainingUnits,
     remainingDays,
     daysUntilTarget,
