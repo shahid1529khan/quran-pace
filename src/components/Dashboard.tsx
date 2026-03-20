@@ -30,22 +30,25 @@ export default function Dashboard() {
 
   const currentSurahMaxRukus = SURAH_RUKU_COUNTS[inputSurah - 1] || 1;
 
+  const currentDay = store.effectiveCurrentDay;
+  const totalDays = state.strategyMode === 'custom_plan' ? state.customTotalDays : state.ramadanTotalDays;
+  const isCustomPlan = state.strategyMode === 'custom_plan';
+
   const projectedFinishDay = useMemo(() => {
     const total = state.currentTotalCompleted;
-    const currentDay = state.currentRamadanDay;
     if (currentDay <= 1 || total === 0) return 0;
     const rate = total / currentDay;
     const remaining = store.remainingUnits;
     return Math.ceil(currentDay + remaining / rate);
-  }, [state.currentTotalCompleted, state.currentRamadanDay, store.remainingUnits]);
+  }, [state.currentTotalCompleted, currentDay, store.remainingUnits]);
 
   const expectedByNow = useMemo(() => {
     if (state.strategyMode === 'taraweeh') {
-      if (state.currentRamadanDay > 27) return TOTAL_RUKUS;
-      return TARAWEEH_27_NIGHT_RUKUS[state.currentRamadanDay - 1] || 0;
+      if (currentDay > 27) return TOTAL_RUKUS;
+      return TARAWEEH_27_NIGHT_RUKUS[currentDay - 1] || 0;
     }
-    return (store.maxUnits / state.targetCompletionDay) * state.currentRamadanDay;
-  }, [state.strategyMode, state.currentRamadanDay, state.targetCompletionDay, store.maxUnits]);
+    return (store.maxUnits / state.targetCompletionDay) * currentDay;
+  }, [state.strategyMode, currentDay, state.targetCompletionDay, store.maxUnits]);
 
   const isOnTrack = useMemo(() => {
     return state.currentTotalCompleted >= Math.floor(expectedByNow);
@@ -99,7 +102,7 @@ export default function Dashboard() {
 
     // We need to check post-log state. Since setState is async, use targetAbs directly.
     const newTotal = Math.min(TOTAL_RUKUS, Math.max(prevTotal, targetAbs));
-    const newExpected = (store.maxUnits / state.ramadanTotalDays) * state.currentRamadanDay;
+    const newExpected = (store.maxUnits / totalDays) * currentDay;
     const isNowOnTrack = newTotal >= Math.floor(newExpected);
 
     if (newTotal >= TOTAL_RUKUS && prevTotal < TOTAL_RUKUS) {
@@ -172,15 +175,19 @@ export default function Dashboard() {
             >
               <HelpCircle size={18} />
             </button>
-            <button onClick={store.prevDay} className="p-1 text-muted-foreground hover:text-primary transition-colors">
-              <ChevronLeft size={20} />
-            </button>
+            {!isCustomPlan && (
+              <button onClick={store.prevDay} className="p-1 text-muted-foreground hover:text-primary transition-colors">
+                <ChevronLeft size={20} />
+              </button>
+            )}
             <span className="font-medium text-muted-foreground text-sm">
-              Day {state.currentRamadanDay} <span className="text-muted-foreground/60 font-normal">/ {state.ramadanTotalDays}</span>
+              Day {currentDay} <span className="text-muted-foreground/60 font-normal">/ {totalDays}</span>
             </span>
-            <button onClick={store.nextDay} className="p-1 text-muted-foreground hover:text-primary transition-colors">
-              <ChevronRight size={20} />
-            </button>
+            {!isCustomPlan && (
+              <button onClick={store.nextDay} className="p-1 text-muted-foreground hover:text-primary transition-colors">
+                <ChevronRight size={20} />
+              </button>
+            )}
           </div>
         </div>
       </header>
@@ -309,7 +316,7 @@ export default function Dashboard() {
           <div className="stat-card">
             <div className="text-muted-foreground text-xs font-medium uppercase mb-1">Est. Finish</div>
             {projectedFinishDay > 0 && !isCompleted ? (
-              <div className={`text-2xl font-bold ${projectedFinishDay <= state.ramadanTotalDays ? 'text-primary' : 'text-destructive'}`}>
+              <div className={`text-2xl font-bold ${projectedFinishDay <= totalDays ? 'text-primary' : 'text-destructive'}`}>
                 Day {projectedFinishDay}
               </div>
             ) : isCompleted ? (

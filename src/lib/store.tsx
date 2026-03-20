@@ -117,6 +117,7 @@ interface StoreContextType {
   state: UserState;
   // Computed
   maxUnits: number;
+  effectiveCurrentDay: number;
   remainingUnits: number;
   remainingDays: number;
   daysUntilTarget: number;
@@ -142,16 +143,29 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     saveState(newState);
   }, []);
 
+  // Auto-calculate current day for custom_plan based on start date
+  const effectiveCurrentDay = useMemo(() => {
+    if (state.strategyMode === 'custom_plan' && state.customStartDate) {
+      const start = new Date(state.customStartDate + 'T00:00:00');
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      const diffMs = now.getTime() - start.getTime();
+      const daysSinceStart = Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
+      return Math.max(1, Math.min(state.customTotalDays, daysSinceStart));
+    }
+    return state.currentRamadanDay;
+  }, [state.strategyMode, state.customStartDate, state.customTotalDays, state.currentRamadanDay]);
+
   const maxUnits = TOTAL_RUKUS;
   const remainingUnits = Math.max(0, maxUnits - state.currentTotalCompleted);
-  const remainingDays = Math.max(1, state.ramadanTotalDays - state.currentRamadanDay + 1);
-  const daysUntilTarget = Math.max(0, state.targetCompletionDay - state.currentRamadanDay + 1);
+  const remainingDays = Math.max(1, state.ramadanTotalDays - effectiveCurrentDay + 1);
+  const daysUntilTarget = Math.max(0, state.targetCompletionDay - effectiveCurrentDay + 1);
   const percentage = Math.min(100, Math.max(0, (state.currentTotalCompleted / maxUnits) * 100));
 
   const dailyRequired = useMemo(() => {
     const strat = state.strategyMode;
     const currentCompleted = state.currentTotalCompleted;
-    const currentDay = state.currentRamadanDay;
+    const currentDay = effectiveCurrentDay;
     const remUnits = Math.max(0, maxUnits - currentCompleted);
 
     if (strat === 'taraweeh') {
@@ -205,7 +219,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     if (strat === 'front') return daysAvail > 15 ? base * 1.25 : base * 0.8;
     if (strat === 'back') return daysAvail <= 10 ? base * 1.5 : base * 0.8;
     return base;
-  }, [state.strategyMode, state.currentTotalCompleted, state.currentRamadanDay, state.targetCompletionDay, state.ramadanTotalDays, state.customDailyTarget, state.customTotalDays, state.weekendHeavy, state.customStartDate, maxUnits]);
+  }, [state.strategyMode, state.currentTotalCompleted, effectiveCurrentDay, state.targetCompletionDay, state.ramadanTotalDays, state.customDailyTarget, state.customTotalDays, state.weekendHeavy, state.customStartDate, maxUnits]);
 
   const completeOnboarding = useCallback((settings: Partial<UserState>) => {
     persist({ ...state, ...settings, isOnboarded: true });
@@ -316,6 +330,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const value: StoreContextType = {
     state,
     maxUnits,
+    effectiveCurrentDay,
     remainingUnits,
     remainingDays,
     daysUntilTarget,
