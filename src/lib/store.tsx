@@ -117,6 +117,7 @@ interface StoreContextType {
   state: UserState;
   // Computed
   maxUnits: number;
+  effectiveCurrentDay: number;
   remainingUnits: number;
   remainingDays: number;
   daysUntilTarget: number;
