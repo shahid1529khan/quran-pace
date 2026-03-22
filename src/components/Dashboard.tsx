@@ -34,6 +34,24 @@ export default function Dashboard() {
   const totalDays = state.strategyMode === 'custom_plan' ? state.customTotalDays : state.ramadanTotalDays;
   const isCustomPlan = state.strategyMode === 'custom_plan';
 
+  // Today's reading progress for custom plan
+  const todayTarget = Math.ceil(store.dailyRequired);
+  const todayReadSoFar = useMemo(() => {
+    const todayStr = new Date().toISOString().split('T')[0];
+    return state.sessions
+      .filter(s => s.dateStr === todayStr)
+      .reduce((sum, s) => sum + s.unitsRead, 0);
+  }, [state.sessions]);
+  const todayRemaining = Math.max(0, todayTarget - todayReadSoFar);
+
+  const readTillPoint = useMemo(() => {
+    if (isCompleted) return null;
+    const targetAbsolute = Math.min(TOTAL_RUKUS, state.currentTotalCompleted + todayRemaining);
+    if (targetAbsolute <= 0) return null;
+    const loc = getRelativeRuku(targetAbsolute);
+    return `${SURAH_NAMES[loc.surah - 1]} — Ruku ${loc.ruku}`;
+  }, [state.currentTotalCompleted, todayRemaining, isCompleted]);
+
   const projectedFinishDay = useMemo(() => {
     const total = state.currentTotalCompleted;
     if (currentDay <= 1 || total === 0) return 0;
