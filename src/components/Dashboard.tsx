@@ -325,6 +325,38 @@ export default function Dashboard() {
           </section>
         </div>
 
+        {/* Today's Reading Progress */}
+        {!isCompleted && (
+          <section className="glass-card rounded-2xl p-5 animate-fade-slide-in-delay-1">
+            <h3 className="text-muted-foreground text-xs font-bold uppercase tracking-wider mb-3">Today's Progress</h3>
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              <div className="bg-secondary rounded-xl p-3 text-center">
+                <div className="text-xs text-muted-foreground mb-1">Target</div>
+                <div className="text-xl font-bold text-foreground">{todayTarget}</div>
+              </div>
+              <div className="bg-primary/10 rounded-xl p-3 text-center">
+                <div className="text-xs text-muted-foreground mb-1">Read</div>
+                <div className="text-xl font-bold text-primary">{todayReadSoFar}</div>
+              </div>
+              <div className={`rounded-xl p-3 text-center ${todayRemaining === 0 ? 'bg-primary/10' : 'bg-destructive/5'}`}>
+                <div className="text-xs text-muted-foreground mb-1">Left</div>
+                <div className={`text-xl font-bold ${todayRemaining === 0 ? 'text-primary' : 'text-destructive'}`}>{todayRemaining}</div>
+              </div>
+            </div>
+            {todayRemaining > 0 && readTillPoint && (
+              <div className="bg-secondary/60 rounded-lg p-3 border border-border">
+                <div className="text-xs text-muted-foreground mb-0.5">📖 Read till</div>
+                <div className="font-semibold text-foreground">{readTillPoint}</div>
+              </div>
+            )}
+            {todayRemaining === 0 && (
+              <div className="bg-primary/10 rounded-lg p-3 border border-primary/20 text-center">
+                <span className="text-primary font-semibold text-sm">✅ Today's target complete!</span>
+              </div>
+            )}
+          </section>
+        )}
+
         {/* Stats Row */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 animate-fade-slide-in-delay-2">
           <div className="stat-card">
