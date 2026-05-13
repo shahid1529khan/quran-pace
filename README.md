@@ -1,73 +1,64 @@
-# Welcome to your Lovable project
+# Quran Pace
 
-## Project info
+Quran Pace is a Ramadan Quran planner that helps readers complete the Quran using Ruku-based progress tracking. It calculates daily targets, records reading sessions, shows where to resume, and provides quick reference pages for Ruku and Juz relationships.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Features
 
-## How can I edit this code?
+- Onboarding for Ramadan length, current day, target finish day, and pacing strategy
+- Balanced, front-loaded, back-loaded, Taraweeh, and custom schedule modes
+- Daily Ruku target calculation based on remaining progress
+- Reading session logging by Surah and Ruku
+- Progress ring, streak tracking, estimated finish day, and recent session history
+- Undo for the most recent reading session
+- Guide for finding Ruku numbers in a Quran
+- Juz-wise Ruku reference table
+- It also has a feature for longer target periods like 60 - 90 days, etc.
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+- Vite
+- React
+- TypeScript
+- Tailwind CSS
+- shadcn/ui and Radix UI
+- Vitest
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+Install dependencies:
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+npm install
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Start the development server:
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```sh
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Run a production build:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```sh
+npm run build
+```
 
-**Use GitHub Codespaces**
+Run tests:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```sh
+npm run test
+```
 
-## What technologies are used for this project?
+## Deployment
 
-This project is built with:
+This app is ready to deploy on Vercel as a standard Vite project.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Recommended Vercel settings:
 
-## How can I deploy this project?
+- Framework preset: Vite
+- Build command: `npm run build`
+- Output directory: `dist`
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+## Data Storage
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+User progress is stored locally in the browser using `localStorage`. No backend or external database is required.
