@@ -58,7 +58,10 @@ Recommended Vercel settings:
 - Framework preset: Vite
 - Build command: `npm run build`
 - Output directory: `dist`
+  
+We have already deployed Quran-pace at https://quran-pace.vercel.app for everyday use.
 
 ## Data Storage
 
 User progress is stored locally in the browser using `localStorage`. No backend or external database is required.
+
